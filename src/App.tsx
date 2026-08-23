@@ -258,3 +258,51 @@ function App() {
         <div className="workspace-scroll">
           {view === "products" && (
             <ProductWorkbench
+              products={filteredProducts}
+              selected={selectedProduct}
+              favorites={favorites}
+              onSelect={setSelectedProduct}
+              onFavorite={toggleFavorite}
+              onMentor={openMentorWithProduct}
+            />
+          )}
+          {view === "thinking" && <ThinkingIndex principles={principles} onAsk={askPrinciple} />}
+          {view === "sources" && <SourceView />}
+        </div>
+      </main>
+
+      <div className={`mentor-column ${mentorOpen ? "open" : ""}`}>
+        <ThinkingMentor
+          context={mentorContext}
+          initialPrompt={mentorPrompt}
+          onClearContext={() => setMentorContext(null)}
+          onClose={() => setMentorOpen(false)}
+          onSave={(decision) => setDecisions((current) => [decision, ...current.filter((item) => item !== decision)].slice(0, 5))}
+        />
+      </div>
+      {mentorOpen && <button className="mentor-scrim" type="button" aria-label="关闭导师" onClick={() => setMentorOpen(false)} />}
+
+      <nav className="mobile-bottom-nav" aria-label="移动端导航">
+        {navItems.slice(0, 2).map((item) => {
+          const Icon = item.icon;
+          return (
+            <button key={item.id} type="button" className={view === item.id && !mentorOpen ? "active" : ""} onClick={() => switchView(item.id)}>
+              <Icon size={19} />
+              <span>{item.label}</span>
+            </button>
+          );
+        })}
+        <button type="button" className={mentorOpen ? "active" : ""} onClick={() => setMentorOpen(true)}>
+          <Sparkles size={19} />
+          <span>导师</span>
+        </button>
+        <button type="button" className={view === "sources" && !mentorOpen ? "active" : ""} onClick={() => switchView("sources")}>
+          <Archive size={19} />
+          <span>来源</span>
+        </button>
+      </nav>
+    </div>
+  );
+}
+
+export default App;
